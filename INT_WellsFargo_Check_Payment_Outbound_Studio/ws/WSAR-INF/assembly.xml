@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+     xmlns="http://www.springframework.org/schema/beans"
+     xmlns:beans="http://www.springframework.org/schema/beans"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:cc="http://www.capeclear.com/assembly/10"
+     xmlns:cloud="urn:com.workday/esb/cloud/10.0"
+     xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
+     xmlns:pi="urn:com.workday/picof"
+     xmlns:wd="urn:com.workday/bsvc"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+	<cc:assembly id="WorkdayAssembly" version="2021.10">
+        <cc:workday-in id="StartHere" routes-to="GetEventDocuments">
+            <cc:integration-system name="INT_WellsFargo_Check_Payment_Outbound_Studio">
+        <cloud:sequence-generator-service name="Seq_Gen">
+          <cloud:sequencer>INT_WellsFargo_Check_Payment_Seq_Gen</cloud:sequencer>
+        </cloud:sequence-generator-service>
+        <cloud:report-service name="RPT_Service">
+          <cloud:report-alias description="CR INT WellsFargo Check Payment Supplier Info" name="SUP">
+            <cloud:report-reference description="CR INT WellsFargo Check Payment Supplier Info" type="WID">32948b9c867b01031d6637b1c21f0000</cloud:report-reference>
+          </cloud:report-alias>
+        </cloud:report-service>
+      </cc:integration-system>
+        </cc:workday-in>
+        <cc:local-out id="GetEventDocuments" routes-response-to="Route" endpoint="vm://wcc/GetEventDocuments">
+            <cc:set name="ie.event.wid" value="lp.isSet() ? lp.getIntegrationEventWID() : null"/>
+        </cc:local-out>
+        <cc:route id="Route">
+            <cc:doc-iterator labels="Deliverable"/>
+            <cc:sub-route name="Process_File" routes-to="StoreFile"/>
+        </cc:route>
+        <cc:async-mediation id="StoreFile" routes-to="Call_Report">
+            <cc:steps>
+                <cc:copy id="Copy" output="variable" output-variable="file.original" input="variable" input-variable="wd.retrieve.variable"/>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.FileName'] = lp.getSequencedValue('INT_WellsFargo_Check_Payment_Seq_Gen')</cc:expression>
+                    <cc:expression>props['get.filename'] = vars['wd.retrieve.variable'].fileName</cc:expression>
+                </cc:eval>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:local-out id="Generate_Output" store-message="none" endpoint="vm://INT_WellsFargo_Check_Payment_Outbound_Studio/Output"/>
+        <cc:local-in id="Output" routes-to="AsyncMediation"/>
+        <cc:async-mediation id="AsyncMediation" routes-to="PutIntegrationMessage" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:copy id="Copy" input="variable" input-variable="file.original"/>
+                <cc:xslt id="Xslt" url="WellsFargo_Check_DT_20210511.xsl"/>
+                <cc:store id="Store" output="variable" output-variable="output.var" expiresIn="P180D" title="@{props['p.FileName']}"/>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage10"/>
+        </cc:async-mediation>
+        <cc:splitter id="SplitReport">
+            <cc:sub-route name="SubRoute" routes-to="Get_Supplier_ID"/>
+            <cc:xml-stream-splitter namespaces="wd urn:com.workday.report/CR_INT_WellsFargo_Check_Payment_Supplier_Info" xpath="wd:Report_Data/wd:Report_Entry"/>
+        </cc:splitter>
+        <cc:workday-out-rest id="WorkdayOutRest" routes-response-to="SplitReport" extra-path="@{intsys.reportService.getExtrapath('SUP')}?format=simplexml"/>
+        <cc:local-out id="Note-Error" store-message="none" endpoint="vm://wcc/PutIntegrationMessage">
+            <cc:set name="is.message.severity" value="'CRITICAL'"/>
+            <cc:set name="is.message.summary" value="&quot;Global error encountered in: - &quot; + context.errorComponentId"/>
+            <cc:set name="is.message.detail" value="&quot;Global error:- &quot;  + context.errorMessage"/>
+        </cc:local-out>
+        <cc:send-error id="global-error-handler" routes-to="Note-Error"/>
+        <cc:local-in id="RaaS" routes-to="Init_Hashmap"/>
+        <cc:local-out id="Call_Report" store-message="none" routes-response-to="Generate_Output" endpoint="vm://INT_WellsFargo_Check_Payment_Outbound_Studio/RaaS"/>
+        <cc:async-mediation id="Init_Hashmap" routes-to="WorkdayOutRest" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['supplier.id.hash']=new java.util.HashMap();</cc:expression>
+                </cc:eval>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage1"/>
+        </cc:async-mediation>
+        <cc:async-mediation id="Get_Supplier_ID" routes-to="SplitReport2" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['supplier.id'] = parts[0].xpath('wd:Report_Entry/wd:Supplier_ID', 'wd urn:com.workday.report/CR_INT_WellsFargo_Check_Payment_Supplier_Info')</cc:expression>
+                </cc:eval>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage1"/>
+        </cc:async-mediation>
+        <cc:splitter id="SplitReport2">
+            <cc:sub-route name="SubRoute" routes-to="Get_Connection_ID"/>
+            <cc:xml-stream-splitter namespaces="wd urn:com.workday.report/CR_INT_WellsFargo_Check_Payment_Supplier_Info" xpath="wd:Report_Entry/wd:Connection"/>
+        </cc:splitter>
+        <cc:async-mediation id="Get_Connection_ID">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['connection.ref.id'] = parts[0].xpath('wd:Connection/wd:Connection_Reference_ID', 'wd urn:com.workday.report/CR_INT_WellsFargo_Check_Payment_Supplier_Info')</cc:expression>
+                    <cc:expression>props['supplier.id.hash'].put(props['connection.ref.id'], props['supplier.id'])</cc:expression>
+                </cc:eval>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>**************Hashmap**********************&#xD;
+props['supplier.id.hash']:@{props['supplier.id.hash']}&#xD;
+**********************************************</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage1"/>
+        </cc:async-mediation>
+        <cc:local-out id="PutIntegrationMessage" endpoint="vm://wcc/PutIntegrationMessage">
+            <cc:set name="is.message.severity" value="'INFO'"/>
+            <cc:set name="is.message.summary" value="&quot;File Available&quot;"/>
+            <cc:set name="is.document.variable.name" value="'output.var'"/>
+            <cc:set name="is.document.deliverable" value="'true'"/>
+        </cc:local-out>
+        <cc:local-out id="PutIntegrationMessage1" endpoint="vm://wcc/PutIntegrationMessage">
+            <cc:set name="is.message.severity" value="'ERROR'"/>
+            <cc:set name="is.message.summary" value="'Error:' +  context.errorMessage"/>
+        </cc:local-out>
+        <cc:local-out id="PutIntegrationMessage10" endpoint="vm://wcc/PutIntegrationMessage">
+            <cc:set name="is.message.severity" value="'ERROR'"/>
+            <cc:set name="is.message.summary" value="'Error:' +  context.errorMessage"/>
+        </cc:local-out>
+	</cc:assembly>
+
+</beans>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wdnm:Diagram xmlns:wdnm="http://workday.com/studio/editors/notation">
+  <element href="assembly.xml#WorkdayAssembly"/>
+  <visualProperties x="107" y="97">
+    <element href="assembly.xml#StartHere"/>
+  </visualProperties>
+  <visualProperties x="272" y="100">
+    <element href="assembly.xml#GetEventDocuments"/>
+  </visualProperties>
+  <visualProperties x="438" y="100">
+    <element href="assembly.xml#Route"/>
+  </visualProperties>
+  <visualProperties x="591" y="155">
+    <element href="assembly.xml#StoreFile"/>
+  </visualProperties>
+  <visualProperties x="723" y="136">
+    <element href="assembly.xml#Generate_Output"/>
+  </visualProperties>
+  <visualProperties x="109" y="374">
+    <element href="assembly.xml#Output"/>
+  </visualProperties>
+  <visualProperties x="197" y="386">
+    <element href="assembly.xml#AsyncMediation"/>
+  </visualProperties>
+  <visualProperties x="444" y="379">
+    <element href="assembly.xml#SplitReport"/>
+  </visualProperties>
+  <visualProperties x="354" y="704">
+    <element href="assembly.xml#WorkdayOutRest"/>
+  </visualProperties>
+  <visualProperties>
+    <element href="assembly.xml#//@beans/@mixed.1/@mixed.21"/>
+  </visualProperties>
+  <visualProperties>
+    <element href="assembly.xml#Note-Error"/>
+  </visualProperties>
+  <visualProperties x="562" y="760">
+    <element href="assembly.xml#RaaS"/>
+  </visualProperties>
+  <visualProperties x="756" y="116">
+    <element href="assembly.xml#Call_Report"/>
+  </visualProperties>
+  <visualProperties x="646" y="787">
+    <element href="assembly.xml#Init_Hashmap"/>
+  </visualProperties>
+  <visualProperties x="1144" y="821">
+    <element href="assembly.xml#Get_Supplier_ID"/>
+  </visualProperties>
+  <visualProperties x="850" y="408">
+    <element href="assembly.xml#SplitReport2"/>
+  </visualProperties>
+  <visualProperties x="1002" y="408">
+    <element href="assembly.xml#Get_Connection_ID"/>
+  </visualProperties>
+  <visualProperties x="423" y="626">
+    <element href="assembly.xml#PutIntegrationMessage"/>
+  </visualProperties>
+  <visualProperties x="730" y="641">
+    <element href="assembly.xml#PutIntegrationMessage1"/>
+  </visualProperties>
+  <visualProperties x="462" y="954">
+    <element href="assembly.xml#PutIntegrationMessage10"/>
+  </visualProperties>
+  <connections type="routesTo" sourceAnchorX="0.865546218487395" sourceAnchorY="1.0" targetAnchorX="0.14507772020725387" targetAnchorY="0.8918918918918919">
+    <source href="assembly.xml#StartHere"/>
+    <target href="assembly.xml#GetEventDocuments"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.7875647668393783" sourceAnchorY="1.0" targetAnchorX="0.15217391304347827" targetAnchorY="0.18292682926829268">
+    <source href="assembly.xml#GetEventDocuments"/>
+    <target href="assembly.xml#Route"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.8235294117647058" targetAnchorX="0.1258741258741259" targetAnchorY="0.17708333333333334">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.0/@subRoute.0"/>
+    <target href="assembly.xml#StoreFile"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.5319148936170213" sourceAnchorY="1.0" targetAnchorX="0.055944055944055944" targetAnchorY="0.40217391304347827">
+    <source href="assembly.xml#Output"/>
+    <target href="assembly.xml#AsyncMediation"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.7810650887573964" sourceAnchorY="1.0" targetAnchorX="0.2848101265822785" targetAnchorY="0.40540540540540543">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.21"/>
+    <target href="assembly.xml#Note-Error"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.2708333333333333" targetAnchorX="0.16455696202531644" targetAnchorY="0.7027027027027027">
+    <source href="assembly.xml#StoreFile"/>
+    <target href="assembly.xml#Call_Report"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.851063829787234" sourceAnchorY="1.0" targetAnchorX="0.16556291390728478" targetAnchorY="0.42391304347826086">
+    <source href="assembly.xml#RaaS"/>
+    <target href="assembly.xml#Init_Hashmap"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.2604166666666667" targetAnchorX="0.12352941176470589" targetAnchorY="0.6756756756756757">
+    <source href="assembly.xml#Init_Hashmap"/>
+    <target href="assembly.xml#WorkdayOutRest"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.8411764705882353" sourceAnchorY="1.0" targetAnchorX="0.2052980132450331" targetAnchorY="0.21951219512195122">
+    <source href="assembly.xml#WorkdayOutRest"/>
+    <target href="assembly.xml#SplitReport"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.9705882352941176" targetAnchorX="0.07947019867549669" targetAnchorY="0.22826086956521738">
+    <source href="assembly.xml#//@beans/@mixed.1/@splitter.0/@subRoute.0"/>
+    <target href="assembly.xml#Get_Supplier_ID"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.6417910447761194" sourceAnchorY="1.0" targetAnchorX="0.17159763313609466" targetAnchorY="0.9459459459459459">
+    <source href="assembly.xml#Call_Report"/>
+    <target href="assembly.xml#Generate_Output"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.125" targetAnchorX="0.1557377049180328" targetAnchorY="0.06097560975609756">
+    <source href="assembly.xml#Get_Supplier_ID"/>
+    <target href="assembly.xml#SplitReport2"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.7522935779816514" sourceAnchorY="1.0" targetAnchorX="0.08196721311475409" targetAnchorY="0.2916666666666667">
+    <source href="assembly.xml#//@beans/@mixed.1/@splitter.1/@subRoute.0"/>
+    <target href="assembly.xml#Get_Connection_ID"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.29591836734693877" targetAnchorX="0.1078838174273859" targetAnchorY="0.5135135135135135">
+    <source href="assembly.xml#AsyncMediation"/>
+    <target href="assembly.xml#PutIntegrationMessage"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.4861111111111111" sourceAnchorY="1.0" targetAnchorX="0.21115537848605578" targetAnchorY="0.05405405405405406">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.27/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage1"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.6227544910179641" sourceAnchorY="1.0" targetAnchorX="0.8207171314741036" targetAnchorY="0.16216216216216217">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.29/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage1"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.765625" sourceAnchorY="1.0" targetAnchorX="0.900398406374502" targetAnchorY="0.21621621621621623">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.33/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage1"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.7262569832402235" sourceAnchorY="1.0" targetAnchorX="0.08045977011494253" targetAnchorY="0.7837837837837838">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.13/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage10"/>
+  </connections>
+  <swimlanes x="66" y="53" name="Outline: Retrieve Files -> Call Report -> Generate Output">
+    <elements href="assembly.xml#StartHere"/>
+    <elements href="assembly.xml#GetEventDocuments"/>
+    <elements href="assembly.xml#Route"/>
+    <elements href="assembly.xml#StoreFile"/>
+    <elements href="assembly.xml#Call_Report"/>
+    <elements href="assembly.xml#Generate_Output"/>
+  </swimlanes>
+  <swimlanes x="59" y="725" name="Call Report">
+    <elements href="assembly.xml#Output"/>
+    <elements href="assembly.xml#AsyncMediation"/>
+    <elements href="assembly.xml#PutIntegrationMessage"/>
+  </swimlanes>
+  <swimlanes x="904" y="760" name="Global Error Handler">
+    <elements href="assembly.xml#//@beans/@mixed.1/@mixed.21"/>
+    <elements href="assembly.xml#Note-Error"/>
+  </swimlanes>
+  <swimlanes x="66" y="298" name="RaaS">
+    <elements href="assembly.xml#RaaS"/>
+    <elements href="assembly.xml#Init_Hashmap"/>
+    <elements href="assembly.xml#WorkdayOutRest"/>
+    <elements href="assembly.xml#SplitReport"/>
+    <elements href="assembly.xml#Get_Supplier_ID"/>
+    <elements href="assembly.xml#SplitReport2"/>
+    <elements href="assembly.xml#Get_Connection_ID"/>
+  </swimlanes>
+</wdnm:Diagram>
