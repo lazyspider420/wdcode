@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+     xmlns="http://www.springframework.org/schema/beans"
+     xmlns:beans="http://www.springframework.org/schema/beans"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:cc="http://www.capeclear.com/assembly/10"
+     xmlns:cloud="urn:com.workday/esb/cloud/10.0"
+     xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
+     xmlns:pi="urn:com.workday/picof"
+     xmlns:wd="urn:com.workday/bsvc"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ 
+	<cc:assembly id="WorkdayAssembly" version="2021.51">
+        <cc:workday-in id="StartHere" routes-to="InitAttribsAndVars">
+            <cc:integration-system name="INT_FIN_All_Zimit_WD_Integration_Errors">
+        <cloud:attribute-map-service name="INT_FIN_All_Zimit_WD_Integration_Errors_Attributes">
+          <cloud:attribute name="Zimit Refresh Token Endpoint">
+            <cloud:type>
+              <cloud:simple-type>text</cloud:simple-type>
+            </cloud:type>
+            <cloud:display-option>required-for-launch</cloud:display-option>
+          </cloud:attribute>
+          <cloud:attribute name="Zimit Refresh Token">
+            <cloud:type>
+              <cloud:simple-type>text</cloud:simple-type>
+            </cloud:type>
+            <cloud:display-option>display-as-password</cloud:display-option>
+            <cloud:display-option>required-for-launch</cloud:display-option>
+          </cloud:attribute>
+          <cloud:attribute name="Zimit Integration Report Endpoint">
+            <cloud:type>
+              <cloud:simple-type>text</cloud:simple-type>
+            </cloud:type>
+            <cloud:display-option>required-for-launch</cloud:display-option>
+          </cloud:attribute>
+          <cloud:attribute name="Document Retention in Days">
+            <cloud:type>
+              <cloud:simple-type>number</cloud:simple-type>
+            </cloud:type>
+            <cloud:display-option>required-for-launch</cloud:display-option>
+          </cloud:attribute>
+        </cloud:attribute-map-service>
+      </cc:integration-system>
+        </cc:workday-in>
+        <cc:local-out id="Call.ProcessZimitErrors" store-message="none" execute-when="props['p.Zimit.Connect.Error'] == 0" endpoint="vm://INT_FIN_All_Zimit_WD_Integration_Errors/ZimitErrors"/>
+        <cc:local-in id="ZimitErrors" routes-to="CheckData"/>
+        <cc:async-mediation id="ErrorsFound" routes-to="NoErrorsFound" execute-steps-when="props['p.Data.Exists']&#x9;">
+            <cc:steps>
+                <cc:validate-exp id="ValidateExp">
+                    <cc:expression error-number="100" failure-message="Number of error(s) received from Zimit: @{props['p.Record.Total.Count']}. Please see CSV attached to Integration Event." replace-message="true">!props['p.Data.Exists']	</cc:expression>
+                </cc:validate-exp>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="SetAPIConnection" routes-to="HttpOut" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:set-headers id="SetHeaderKey" output="message">
+                    <cc:remove-headers/>
+                    <cc:add-headers>
+                        <cc:add-header name="Authorization" value="Bearer @{props['p.Zimit.Access.Token']}"/>
+                    </cc:add-headers>
+                </cc:set-headers>
+                <cc:set-headers id="SetHeaderContent" output="rootpart">
+                    <cc:remove-headers/>
+                    <cc:add-headers>
+                        <cc:add-header name="Content-Type" value="application/json; charset=utf-8"/>
+                    </cc:add-headers>
+                </cc:set-headers>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage"/>
+        </cc:async-mediation>
+        <cc:http-out id="HttpOut" routes-response-to="AsyncMediation10" endpoint="@{props['p.Zimit.Int.Rpt.Endpoint']}" http-method="GET">
+        </cc:http-out>
+        <cc:local-in id="ZimitAPI" routes-to="SetAPIConnection"/>
+        <cc:local-out id="Call.ZimitAPI" store-message="none" execute-when="props['p.Zimit.Connect.Error'] == 0" routes-response-to="Call.ProcessZimitErrors" endpoint="vm://INT_FIN_All_Zimit_WD_Integration_Errors/ZimitAPI"/>
+        <cc:local-out id="PutIntegrationMessage" routes-response-to="EndIntegrationProcessing" endpoint="vm://wcc/PutIntegrationMessage"><cc:set name="is.message.severity" value="'INFO'"/><cc:set name="is.message.summary" value="&quot;No Zimit errors found.&quot;"/><cc:set name="is.message.detail" value="context.errorMessage"/></cc:local-out>
+        <cc:http-out id="HttpOut0" routes-response-to="AsyncMediation1" endpoint="@{props['p.Zimit.Refresh.Token.Endpoint']}" http-method="POST">
+        </cc:http-out>
+        <cc:async-mediation id="AsyncMediation1">
+            <cc:steps>
+                <cc:json-to-xml id="JsonToXml" output="message"/>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.Zimit.Access.Token'] = parts[0].xpath('root/data/access_token')</cc:expression>
+                </cc:eval>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:local-in id="TokenGenerator" routes-to="AsyncMediation2"/>
+        <cc:local-out id="Call.TokenGenerator" store-message="none" routes-response-to="Call.ZimitAPI" endpoint="vm://INT_FIN_All_Zimit_WD_Integration_Errors/TokenGenerator"/>
+        <cc:async-mediation id="AsyncMediation2" routes-to="HttpOut0" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:write id="Write" output="message" output-mimetype="application/json">
+                    <cc:message>
+                        <cc:text>{&#xD;
+&quot;refreshToken&quot; : &quot;@{props['p.Zimit.Refresh.Token']}&quot;&#xD;
+}</cc:text>
+                    </cc:message>
+                </cc:write>
+                <cc:set-headers id="SetHeaders" output="message"><cc:remove-headers/><cc:add-headers>
+    <cc:add-header name="Content-Type" value="application/json"/>
+</cc:add-headers></cc:set-headers>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage0"/>
+        </cc:async-mediation>
+        <cc:local-out id="Note-Error" endpoint="vm://wcc/PutIntegrationMessage">
+            <cc:set name="is.message.severity" value="'CRITICAL'"/>
+            <cc:set name="is.message.summary" value="context.errorMessage"/>
+            <cc:set name="is.message.detail" value="&quot;Component ID: &quot; + context.errorComponentId"/>
+        </cc:local-out>
+        <cc:send-error id="global-error-handler" rethrow-error="false" routes-to="Note-Error"/>
+        <cc:async-mediation id="AsyncMediation10">
+            <cc:steps>
+                <cc:json-to-xml id="JsonToXml" output="message"/>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="CheckData" routes-to="ErrorsFound" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.Data.Exists'] = parts[0].xpathB('/root/data/total')</cc:expression>
+                    <cc:expression>props['p.Record.Total.Count'] = parts[0].xpath('/root/data/total')</cc:expression>
+                    <cc:expression>props['p.Zimit.ID'] = parts[0].xpath('items/data/id')	</cc:expression>
+                    <cc:expression>props['p.Zimit.ErrMsg'] = parts[0].xpath('items/data/error/message')</cc:expression>
+                    <cc:expression>//props['p.CO.Update.Error.Count'] = 0</cc:expression>
+                    <cc:expression>//props['p.Extend.Update.Error.Count'] = 0</cc:expression>
+                    <cc:expression>//props['p.Extend.Update.Success.Count'] = 0</cc:expression>
+                    <cc:expression>//props['p.Extend.Update.Batch'] = 0</cc:expression>
+                </cc:eval>
+                <cc:copy id="Copy" output="variable" output-variable="vRepOutputXML" input="message"/>
+                <cc:xslt id="Xslt" output="variable" output-variable="vRepOutputCSV" input="variable" input-variable="vRepOutputXML" url="TransformZimitToCSV.xsl"/>
+                <cc:store id="StoreCSV" output="variable" output-variable="vRepOutputCSVOutput" input="variable" input-variable="vRepOutputCSV" expiresIn="@{props['p.Document.Expiry']}" title="Zimit_IntegrationReport_Errors_@{props['p.DateTime.CurrentDateTimeFormat']}.csv"/>
+                <cc:store id="StoreReportOuput" output="variable" output-variable="vRepOutputFileHandle" input="variable" input-variable="vRepOutputXML" createDocumentReference="true" expiresIn="@{props['p.Document.Expiry']}" title="Zimit_IntegrationReport_Errors_@{props['p.DateTime.CurrentDateTimeFormat']}.xml"/>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="InitAttribsAndVars" routes-to="Call.TokenGenerator">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>//props['oauth.username'] = ''</cc:expression>
+                    <cc:expression>//props['oauth.password'] = ''</cc:expression>
+                    <cc:expression>props['p.Zimit.Refresh.Token.Endpoint'] =  intsys.getAttribute('Zimit Refresh Token Endpoint')</cc:expression>
+                    <cc:expression>props['p.Zimit.Refresh.Token'] =  intsys.getAttribute('Zimit Refresh Token')</cc:expression>
+                    <cc:expression>props['p.Zimit.Int.Rpt.Endpoint'] =  intsys.getAttribute('Zimit Integration Report Endpoint')</cc:expression>
+                    <cc:expression>props['p.DateTime.CurrentDateTime'] = java.util.Calendar.getInstance().getTime()</cc:expression>
+                    <cc:expression>//props['p.DateTime.DateTimeFormat'] = &quot;EEE MMM dd HH:mm:ss z yyyy&quot;</cc:expression>
+                    <cc:expression>//props['p.DateTime.CurrentDateTimeParsed'] = new java.text.SimpleDateFormat(props['p.DateTime.DateTimeFormat']).parse(props['p.DateTime.CurrentDateTime'])&#xD;
+//props['p.DateTime.CurrentDateTimeParsed'] = new java.text.SimpleDateFormat(props['p.DateTime.DateTimeFormat']).parse('EEE MMM dd HH:mm:ss z yyyy')</cc:expression>
+                    <cc:expression>//props['p.DateTime.CurrentDateTimeFormat'] = new java.text.SimpleDateFormat('yyyy-MM-dd-HH:mm:ss').format(props['p.DateTime.CurrentDateTimeParsed'])&#xD;
+props['p.DateTime.CurrentDateTimeFormat'] = new java.text.SimpleDateFormat('yyyy-MM-dd-HH:mm:ss').format(props['p.DateTime.CurrentDateTime'])</cc:expression>
+                    <cc:expression>props['p.CurrentMoment'] = util.currentDateTimeAsString()</cc:expression>
+                    <cc:expression>props['p.Document.Expiry'] = &quot;P&quot; + intsys.getAttribute('Document Retention in Days') + &quot;D&quot;</cc:expression>
+                    <cc:expression>props['p.Zimit.Connect.Error'] = 0</cc:expression>
+                </cc:eval>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>---------------------KEY -----------------------------&#xD;
+props['p.Zimit.Refresh.Token'] : @{props['p.Zimit.Refresh.Token']}&#xD;
+&#xD;
+&#xD;
+---------------------KEY -----------------------------</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="NoErrorsFound" execute-steps-when="!props['p.Data.Exists']&#x9;" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:validate-exp id="Empty">
+                    <cc:expression failure-message="No Zimit errors found.">props['p.Data.Exists']</cc:expression>
+                </cc:validate-exp>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutEmptyRepMsg"/>
+        </cc:async-mediation>
+        <cc:local-out id="PutEmptyRepMsg" endpoint="vm://wcc/PutIntegrationMessage">
+            <cc:set name="is.message.severity" value="'INFO'"/>
+            <cc:set name="is.message.summary" value="context.errorMessage"/>
+        </cc:local-out>
+        <cc:local-out id="EndIntegrationProcessing" store-message="none" endpoint="vm://INT_FIN_All_Zimit_WD_Integration_Errors/EndProcessing"/>
+        <cc:async-mediation id="BlankMsg">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.Zimit.Connect.Error'] = 1</cc:expression>
+                </cc:eval>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:local-in id="EndProcessing" routes-to="BlankMsg"/>
+        <cc:local-out id="PutIntegrationMessage0" routes-response-to="EndIntegrationProcessing" endpoint="vm://wcc/PutIntegrationMessage">
+            <cc:set name="is.message.severity" value="'ERROR'"/>
+            <cc:set name="is.message.summary" value="&quot;Unable to connect to Zimit tenant.&quot;"/>
+            <cc:set name="is.message.detail" value="context.errorMessage"/>
+        </cc:local-out>
+	</cc:assembly>
+
+</beans>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wdnm:Diagram xmlns:wdnm="http://workday.com/studio/editors/notation">
+  <element href="assembly.xml#WorkdayAssembly"/>
+  <visualProperties x="212" y="176">
+    <element href="assembly.xml#StartHere"/>
+  </visualProperties>
+  <visualProperties x="314" y="214">
+    <element href="assembly.xml#Call.ProcessZimitErrors"/>
+  </visualProperties>
+  <visualProperties x="201" y="338">
+    <element href="assembly.xml#ZimitErrors"/>
+  </visualProperties>
+  <visualProperties x="958" y="372">
+    <element href="assembly.xml#ErrorsFound"/>
+  </visualProperties>
+  <visualProperties x="290" y="691">
+    <element href="assembly.xml#SetAPIConnection"/>
+  </visualProperties>
+  <visualProperties x="809" y="688">
+    <element href="assembly.xml#HttpOut"/>
+  </visualProperties>
+  <visualProperties x="227" y="674">
+    <element href="assembly.xml#ZimitAPI"/>
+  </visualProperties>
+  <visualProperties x="335" y="209">
+    <element href="assembly.xml#Call.ZimitAPI"/>
+  </visualProperties>
+  <visualProperties x="953" y="692">
+    <element href="assembly.xml#PutIntegrationMessage"/>
+  </visualProperties>
+  <visualProperties x="788" y="831">
+    <element href="assembly.xml#HttpOut0"/>
+  </visualProperties>
+  <visualProperties x="799" y="880">
+    <element href="assembly.xml#AsyncMediation1"/>
+  </visualProperties>
+  <visualProperties x="346" y="244">
+    <element href="assembly.xml#TokenGenerator"/>
+  </visualProperties>
+  <visualProperties x="242" y="257">
+    <element href="assembly.xml#Call.TokenGenerator"/>
+  </visualProperties>
+  <visualProperties x="380" y="860">
+    <element href="assembly.xml#AsyncMediation2"/>
+  </visualProperties>
+  <visualProperties>
+    <element href="assembly.xml#//@beans/@mixed.1/@mixed.31"/>
+  </visualProperties>
+  <visualProperties>
+    <element href="assembly.xml#Note-Error"/>
+  </visualProperties>
+  <visualProperties x="894" y="651">
+    <element href="assembly.xml#AsyncMediation10"/>
+  </visualProperties>
+  <visualProperties x="1141" y="397">
+    <element href="assembly.xml#CheckData"/>
+  </visualProperties>
+  <visualProperties x="876" y="175">
+    <element href="assembly.xml#InitAttribsAndVars"/>
+  </visualProperties>
+  <visualProperties x="840" y="367">
+    <element href="assembly.xml#NoErrorsFound"/>
+  </visualProperties>
+  <visualProperties x="1018" y="383">
+    <element href="assembly.xml#PutEmptyRepMsg"/>
+  </visualProperties>
+  <visualProperties x="1065" y="651">
+    <element href="assembly.xml#EndIntegrationProcessing"/>
+  </visualProperties>
+  <visualProperties x="155" y="390">
+    <element href="assembly.xml#EndProcessing"/>
+  </visualProperties>
+  <visualProperties x="330" y="390">
+    <element href="assembly.xml#BlankMsg"/>
+  </visualProperties>
+  <visualProperties x="881" y="866">
+    <element href="assembly.xml#PutIntegrationMessage0"/>
+  </visualProperties>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.15306122448979592" targetAnchorX="0.3277310924369748" targetAnchorY="0.32432432432432434">
+    <source href="assembly.xml#SetAPIConnection"/>
+    <target href="assembly.xml#HttpOut"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.43243243243243246" targetAnchorX="0.08620689655172414" targetAnchorY="0.11224489795918367">
+    <source href="assembly.xml#ZimitAPI"/>
+    <target href="assembly.xml#SetAPIConnection"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.5666666666666667" targetAnchorX="0.14107883817427386" targetAnchorY="0.35135135135135137">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.9/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.7209302325581395" sourceAnchorY="1.0" targetAnchorX="0.2808988764044944" targetAnchorY="0.22826086956521738">
+    <source href="assembly.xml#HttpOut0"/>
+    <target href="assembly.xml#AsyncMediation1"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.32608695652173914" targetAnchorX="0.1388888888888889" targetAnchorY="0.2676056338028169">
+    <source href="assembly.xml#AsyncMediation2"/>
+    <target href="assembly.xml#HttpOut0"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.732620320855615" sourceAnchorY="1.0" targetAnchorX="0.09550561797752809" targetAnchorY="0.09183673469387756">
+    <source href="assembly.xml#TokenGenerator"/>
+    <target href="assembly.xml#AsyncMediation2"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.9669421487603306" sourceAnchorY="0.43243243243243246" targetAnchorX="0.06060606060606061" targetAnchorY="0.3783783783783784">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.31"/>
+    <target href="assembly.xml#Note-Error"/>
+  </connections>
+  <connections type="routesResponseTo">
+    <source href="assembly.xml#Call.TokenGenerator"/>
+    <target href="assembly.xml#Call.ZimitAPI"/>
+  </connections>
+  <connections type="routesResponseTo">
+    <source href="assembly.xml#HttpOut"/>
+    <target href="assembly.xml#AsyncMediation10"/>
+  </connections>
+  <connections type="routesResponseTo">
+    <source href="assembly.xml#Call.ZimitAPI"/>
+    <target href="assembly.xml#Call.ProcessZimitErrors"/>
+  </connections>
+  <connections type="routesTo">
+    <source href="assembly.xml#ZimitErrors"/>
+    <target href="assembly.xml#CheckData"/>
+  </connections>
+  <connections type="routesTo">
+    <source href="assembly.xml#StartHere"/>
+    <target href="assembly.xml#InitAttribsAndVars"/>
+  </connections>
+  <connections type="routesTo">
+    <source href="assembly.xml#InitAttribsAndVars"/>
+    <target href="assembly.xml#Call.TokenGenerator"/>
+  </connections>
+  <connections type="routesTo">
+    <source href="assembly.xml#CheckData"/>
+    <target href="assembly.xml#ErrorsFound"/>
+  </connections>
+  <connections type="routesTo">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.39/@mixed.3"/>
+    <target href="assembly.xml#PutEmptyRepMsg"/>
+  </connections>
+  <connections type="routesTo">
+    <source href="assembly.xml#ErrorsFound"/>
+    <target href="assembly.xml#NoErrorsFound"/>
+  </connections>
+  <connections type="routesResponseTo">
+    <source href="assembly.xml#PutIntegrationMessage"/>
+    <target href="assembly.xml#EndIntegrationProcessing"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.24324324324324326" targetAnchorX="0.5471698113207547" targetAnchorY="0.14583333333333334">
+    <source href="assembly.xml#EndProcessing"/>
+    <target href="assembly.xml#BlankMsg"/>
+  </connections>
+  <connections type="routesTo">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.27/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage0"/>
+  </connections>
+  <connections type="routesResponseTo">
+    <source href="assembly.xml#PutIntegrationMessage0"/>
+    <target href="assembly.xml#EndIntegrationProcessing"/>
+  </connections>
+  <swimlanes x="161" y="129" name="Main Process">
+    <elements href="assembly.xml#StartHere"/>
+    <elements href="assembly.xml#InitAttribsAndVars"/>
+    <elements href="assembly.xml#Call.TokenGenerator"/>
+    <elements href="assembly.xml#Call.ZimitAPI"/>
+    <elements href="assembly.xml#Call.ProcessZimitErrors"/>
+  </swimlanes>
+  <swimlanes x="161" y="293" name="Client Data">
+    <elements href="assembly.xml#ZimitErrors"/>
+    <elements href="assembly.xml#CheckData"/>
+    <elements href="assembly.xml#ErrorsFound"/>
+    <elements href="assembly.xml#NoErrorsFound"/>
+    <elements href="assembly.xml#PutEmptyRepMsg"/>
+  </swimlanes>
+  <swimlanes x="170" y="561" name="API Connection">
+    <elements href="assembly.xml#ZimitAPI"/>
+    <elements href="assembly.xml#SetAPIConnection"/>
+    <elements href="assembly.xml#HttpOut"/>
+    <elements href="assembly.xml#PutIntegrationMessage"/>
+    <elements href="assembly.xml#AsyncMediation10"/>
+    <elements href="assembly.xml#EndIntegrationProcessing"/>
+  </swimlanes>
+  <swimlanes x="219" y="776" name="AccessTokenGeneratorFromRefeshToken">
+    <elements href="assembly.xml#TokenGenerator"/>
+    <elements href="assembly.xml#AsyncMediation2"/>
+    <elements href="assembly.xml#HttpOut0"/>
+    <elements href="assembly.xml#PutIntegrationMessage0"/>
+    <elements href="assembly.xml#AsyncMediation1"/>
+  </swimlanes>
+  <swimlanes x="1213" y="150" bgColor="1533439" name="GLOBAL ERROR HANDLER" topBorderColor="869040">
+    <elements href="assembly.xml#//@beans/@mixed.1/@mixed.31"/>
+    <elements href="assembly.xml#Note-Error"/>
+  </swimlanes>
+  <swimlanes x="1262" y="776" name="Force end">
+    <elements href="assembly.xml#EndProcessing"/>
+    <elements href="assembly.xml#BlankMsg"/>
+  </swimlanes>
+</wdnm:Diagram>

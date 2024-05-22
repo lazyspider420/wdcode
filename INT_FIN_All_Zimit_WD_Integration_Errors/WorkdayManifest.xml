@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wm:manifest xmlns:wm="http://www.workday.com/solution/catalog/manifest/10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.workday.com/solution/catalog/manifest/10 http://www.workday.com/solution/catalog/manifest/10">
+   <wm:clar version="3.0"/>
+   <wm:descriptive>
+      <wm:title>INT_FIN_All_Zimit_WD_Integration_Errors final original prototype</wm:title>
+      <wm:description>Sample Description</wm:description>
+      <wm:author>Ray.Iallonardo</wm:author>
+      <wm:timestamp>2022-03-08T09:53:15.381+01:00</wm:timestamp>
+   </wm:descriptive>
+</wm:manifest>
